@@ -1,0 +1,5 @@
+# DbBlobLib
+
+This is a C# class library for seamless persistence of Azure blob metadata in a database for more efficient querying later. A need for this came up in my work on a blob backup utility. Performance of the [ListBlobs](https://msdn.microsoft.com/library/microsoft.windowsazure.storage.blob.cloudblobcontainer.listblobs.aspx) method was a bottleneck -- even without metadata -- and was jeopardizing viability of the project. I decided to approach differently -- so that regular blob upload operations would always be capturing metadata incrementally. It would be more efficient to query later instead of relying on the **ListBlobs** method.
+
+The theory is you'd replace any use of **CloudBlockBlob** in your project with [CloudBlockDbBlob&lt;T&gt;](https://github.com/adamosoftware/DbBlobLib/blob/master/BlobSqlMirrorLib/CloudBlockDbBlob.cs) where `T` : [IBlobRecord](https://github.com/adamosoftware/DbBlobLib/blob/master/BlobSqlMirrorLib/Models/IBlobRecord.cs). This is an abstract class, so you must implement a few methods: `OnSave`, `OnDelete`, and `FindRecord`. Since the `T` parameter is an interface, it's completely storage-agnostic.
